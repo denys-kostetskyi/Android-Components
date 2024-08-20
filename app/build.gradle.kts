@@ -28,6 +28,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        compose = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -45,6 +46,13 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.ui)
+    implementation(libs.compose.material)
+    implementation(libs.compose.runtime)
+    implementation(libs.compose.ui.graphics)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.activity)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
