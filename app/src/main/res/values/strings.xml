@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Android Components</string>
     <string name="start_compose_activity">Start Compose Activity</string>
-    <string name="result_from_compose_activity">Result from Compose activity: %1$s</string>
+    <string name="result_from_compose_activity">Result from ComposeActivity: %1$s</string>
+    <string name="title_activity_second">SecondActivity</string>
+    <string name="hello_from_main_activity">Hello from MainActivity!</string>
 </resources>

@@ -2,6 +2,7 @@ package com.denyskostetskyi.androidcomponents
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -33,18 +34,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun launchComposeActivity() {
-        //TODO implement compose activity launching method
-        //startActivityForResult(intent, REQUEST_CODE_COMPOSE_ACTIVITY);
+        val message = getString(R.string.hello_from_main_activity)
+        val intent = ComposeActivity.newIntent(this, message)
+        startActivityForResult(intent, REQUEST_CODE_COMPOSE_ACTIVITY)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE_COMPOSE_ACTIVITY) {
+        if (requestCode == REQUEST_CODE_COMPOSE_ACTIVITY && resultCode == RESULT_OK) {
             val result = data?.getStringExtra(KEY_COMPOSE_ACTIVITY_RESULT) ?: NO_RESULT
-            binding.textViewComposeActivityResult.text = getString(
-                R.string.result_from_compose_activity,
-                result
-            )
+            with(binding.textViewComposeActivityResult) {
+                text = getString(
+                    R.string.result_from_compose_activity,
+                    result
+                )
+                visibility = View.VISIBLE
+            }
         }
     }
 
