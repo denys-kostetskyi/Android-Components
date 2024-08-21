@@ -5,6 +5,8 @@
     <string name="title_activity_second">SecondActivity</string>
     <string name="hello_from_main_activity">Hello from MainActivity!</string>
     <string name="start_timer_service">Start Timer Service</string>
+    <string name="bind_timer_service">Bind Timer Service</string>
+    <string name="start_timer">Start Timer</string>
     <string name="toast_service_created">TimerService created</string>
     <string name="toast_service_destroyed">TimerService destroyed</string>
     <string name="toast_service_task_already_running">TimerService task is already running</string>

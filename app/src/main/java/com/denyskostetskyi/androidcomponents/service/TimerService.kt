@@ -3,6 +3,7 @@ package com.denyskostetskyi.androidcomponents.service
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.os.Binder
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.IBinder
@@ -14,6 +15,7 @@ class TimerService : Service() {
     private var isTaskRunning = false
     private lateinit var handlerThread: HandlerThread
     private lateinit var serviceHandler: Handler
+    private val binder = LocalBinder()
 
     override fun onCreate() {
         super.onCreate()
@@ -32,17 +34,25 @@ class TimerService : Service() {
         flags: Int,
         startId: Int,
     ): Int {
+        val duration = intent?.getIntExtra(KEY_TIMER_DURATION, DEFAULT_TIMER_DURATION)
+            ?: DEFAULT_TIMER_DURATION
+        startTimer(duration)
+        return START_STICKY
+    }
+
+    fun startTimer(duration: Int) {
+        if (duration < 0) {
+            throw IllegalArgumentException("Duration can't be less than 0")
+        }
         if (isTaskRunning) {
             Toast.makeText(
                 this,
                 getString(R.string.toast_service_task_already_running),
                 Toast.LENGTH_SHORT
             ).show()
-            return START_STICKY
+            return
         }
         isTaskRunning = true
-        val duration = intent?.getIntExtra(KEY_TIMER_DURATION, DEFAULT_TIMER_DURATION)
-            ?: DEFAULT_TIMER_DURATION
         serviceHandler.post {
             try {
                 for (i in 0..duration) {
@@ -54,7 +64,6 @@ class TimerService : Service() {
                 stopSelf()
             }
         }
-        return START_STICKY
     }
 
     override fun onDestroy() {
@@ -67,8 +76,12 @@ class TimerService : Service() {
         ).show()
     }
 
-    override fun onBind(intent: Intent?): IBinder? {
-        TODO("Not yet implemented")
+    inner class LocalBinder : Binder() {
+        fun getService(): TimerService = this@TimerService
+    }
+
+    override fun onBind(intent: Intent): IBinder {
+        return binder
     }
 
     companion object {
@@ -78,13 +91,9 @@ class TimerService : Service() {
         private const val DEFAULT_TIMER_DURATION = 10
         private const val SLEEP_DURATION = 1000L
 
-        fun newIntent(context: Context, duration: Int): Intent {
-            if (duration < 0) {
-                throw IllegalArgumentException("Duration can't be less than 0")
-            }
-            return Intent(context, TimerService::class.java).apply {
+        fun newIntent(context: Context, duration: Int) =
+            Intent(context, TimerService::class.java).apply {
                 putExtra(KEY_TIMER_DURATION, duration)
             }
-        }
     }
 }

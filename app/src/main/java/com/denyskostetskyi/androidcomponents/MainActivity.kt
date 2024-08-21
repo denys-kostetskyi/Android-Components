@@ -1,12 +1,17 @@
 package com.denyskostetskyi.androidcomponents
 
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import com.denyskostetskyi.androidcomponents.databinding.ActivityMainBinding
 import com.denyskostetskyi.androidcomponents.service.TimerService
 
@@ -14,6 +19,22 @@ class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
     private val binding: ActivityMainBinding
         get() = _binding ?: throw RuntimeException("ActivityMainBinding is null")
+
+    private lateinit var timerService: TimerService
+    private var isTimerServiceBound = false
+    private val timerServiceConnection = object : ServiceConnection {
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            val binder = service as TimerService.LocalBinder
+            timerService = binder.getService()
+            isTimerServiceBound = true
+            switchTimerButtonsVisibility()
+        }
+
+        override fun onServiceDisconnected(arg0: ComponentName) {
+            isTimerServiceBound = false
+            switchTimerButtonsVisibility()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,12 +56,34 @@ class MainActivity : AppCompatActivity() {
         binding.buttonStartTimerService.setOnClickListener {
             startService(TimerService.newIntent(this, TIMER_DURATION))
         }
+        binding.buttonBindTimerService.setOnClickListener {
+            bindTimerService()
+        }
+        binding.buttonStartTimer.setOnClickListener {
+            if (isTimerServiceBound) {
+                timerService.startTimer(TIMER_DURATION)
+            }
+        }
     }
 
     private fun launchComposeActivity() {
         val message = getString(R.string.hello_from_main_activity)
         val intent = ComposeActivity.newIntent(this, message)
         startActivityForResult(intent, REQUEST_CODE_COMPOSE_ACTIVITY)
+    }
+
+    private fun bindTimerService() {
+        if (!isTimerServiceBound) {
+            val intent = TimerService.newIntent(this, TIMER_DURATION)
+            bindService(intent, timerServiceConnection, Context.BIND_AUTO_CREATE)
+        }
+    }
+
+    private fun switchTimerButtonsVisibility() {
+        with(binding) {
+            buttonBindTimerService.isVisible = !isTimerServiceBound
+            buttonStartTimer.isVisible = isTimerServiceBound
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -55,6 +98,12 @@ class MainActivity : AppCompatActivity() {
                 visibility = View.VISIBLE
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unbindService(timerServiceConnection)
+        isTimerServiceBound = false
     }
 
     companion object {
