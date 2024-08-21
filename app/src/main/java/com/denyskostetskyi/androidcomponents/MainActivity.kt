@@ -7,13 +7,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.denyskostetskyi.androidcomponents.activity.BroadcastsActivity
 import com.denyskostetskyi.androidcomponents.activity.ServicesActivity
 import com.denyskostetskyi.androidcomponents.databinding.ActivityMainBinding
 
 
 class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
-    private val binding: ActivityMainBinding
+    private val binding
         get() = _binding ?: throw RuntimeException("ActivityMainBinding is null")
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,15 +27,14 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        setButtonClickListener()
+        setButtonClickListeners()
     }
 
-    private fun setButtonClickListener() {
-        binding.buttonStartComposeActivity.setOnClickListener {
-            launchComposeActivity()
-        }
-        binding.buttonStartServicesActivity.setOnClickListener {
-            startActivity(ServicesActivity.newIntent(this))
+    private fun setButtonClickListeners() {
+        with(binding) {
+            buttonStartComposeActivity.setOnClickListener { launchComposeActivity() }
+            buttonStartServicesActivity.setOnClickListener { launchServicesActivity() }
+            buttonStartBroadcastsActivity.setOnClickListener { launchBroadcastsActivity() }
         }
     }
 
@@ -44,7 +44,13 @@ class MainActivity : AppCompatActivity() {
         startActivityForResult(intent, REQUEST_CODE_COMPOSE_ACTIVITY)
     }
 
+    private fun launchServicesActivity() {
+        startActivity(ServicesActivity.newIntent(this))
+    }
 
+    private fun launchBroadcastsActivity() {
+        startActivity(BroadcastsActivity.newIntent(this))
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
