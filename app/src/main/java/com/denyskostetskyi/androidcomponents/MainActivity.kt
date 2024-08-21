@@ -1,55 +1,20 @@
 package com.denyskostetskyi.androidcomponents
 
-import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
 import android.os.Bundle
-import android.os.IBinder
-import android.util.Log
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.isVisible
+import com.denyskostetskyi.androidcomponents.activity.ServicesActivity
 import com.denyskostetskyi.androidcomponents.databinding.ActivityMainBinding
-import com.denyskostetskyi.androidcomponents.service.RemoteMockService
-import com.denyskostetskyi.androidcomponents.service.TimerService
 
 
 class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
     private val binding: ActivityMainBinding
         get() = _binding ?: throw RuntimeException("ActivityMainBinding is null")
-
-    private var timerService: TimerService? = null
-    private val isTimerServiceBound get() = timerService != null
-    private val timerServiceConnection = object : ServiceConnection {
-        override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            val binder = service as TimerService.LocalBinder
-            timerService = binder.getService()
-            switchTimerButtonsVisibility()
-        }
-
-        override fun onServiceDisconnected(arg0: ComponentName) {
-            timerService = null
-            switchTimerButtonsVisibility()
-        }
-    }
-
-    private var remoteService: IRemoteMockService? = null
-    private val isRemoteServiceBound get() = remoteService != null
-    private val remoteServiceConnection = object : ServiceConnection {
-        override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            remoteService = IRemoteMockService.Stub.asInterface(service)
-        }
-
-        override fun onServiceDisconnected(className: ComponentName) {
-            Log.e(TAG, "Service has unexpectedly disconnected")
-            remoteService = null
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,28 +33,8 @@ class MainActivity : AppCompatActivity() {
         binding.buttonStartComposeActivity.setOnClickListener {
             launchComposeActivity()
         }
-        binding.buttonStartTimerService.setOnClickListener {
-            startService(TimerService.newIntent(this, TIMER_DURATION))
-        }
-        binding.buttonBindTimerService.setOnClickListener {
-            bindTimerService()
-        }
-        binding.buttonStartTimer.setOnClickListener {
-            if (isTimerServiceBound) {
-                timerService?.startTimer(TIMER_DURATION)
-            } else {
-                switchTimerButtonsVisibility()
-            }
-        }
-        binding.buttonBindRemoteService.setOnClickListener {
-            bindRemoteService()
-        }
-        binding.buttonCallRemoteService.setOnClickListener {
-            if (isRemoteServiceBound) {
-                remoteService?.showToast("MainActivity")
-            } else {
-                switchRemoteServiceButtonsVisibility()
-            }
+        binding.buttonStartServicesActivity.setOnClickListener {
+            startActivity(ServicesActivity.newIntent(this))
         }
     }
 
@@ -99,33 +44,7 @@ class MainActivity : AppCompatActivity() {
         startActivityForResult(intent, REQUEST_CODE_COMPOSE_ACTIVITY)
     }
 
-    private fun bindTimerService() {
-        if (!isTimerServiceBound) {
-            val intent = TimerService.newIntent(this, TIMER_DURATION)
-            bindService(intent, timerServiceConnection, Context.BIND_AUTO_CREATE)
-        }
-    }
 
-    private fun switchTimerButtonsVisibility() {
-        with(binding) {
-            buttonBindTimerService.isVisible = !isTimerServiceBound
-            buttonStartTimer.isVisible = isTimerServiceBound
-        }
-    }
-
-    private fun bindRemoteService() {
-        val intent = Intent().apply {
-            setClassName(PACKAGE_NAME, CLASS_NAME)
-        }
-        bindService(intent, remoteServiceConnection, Context.BIND_AUTO_CREATE)
-    }
-
-    private fun switchRemoteServiceButtonsVisibility() {
-        with(binding) {
-            buttonBindRemoteService.isVisible = !isRemoteServiceBound
-            buttonCallRemoteService.isVisible = isRemoteServiceBound
-        }
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -141,19 +60,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onStop() {
-        super.onStop()
-        unbindService(timerServiceConnection)
-    }
-
     companion object {
         private const val TAG = "MainActivity"
         private const val REQUEST_CODE_COMPOSE_ACTIVITY = 1
         private const val KEY_COMPOSE_ACTIVITY_RESULT = "result"
         private const val NO_RESULT = "no result"
-        private const val TIMER_DURATION = 15
-        private const val PACKAGE_NAME = "com.denyskostetskyi.androidcomponents.service"
-        private const val CLASS_NAME = "$PACKAGE_NAME.RemoteMockService"
 
         fun newResultIntent(result: String) = Intent().apply {
             putExtra(KEY_COMPOSE_ACTIVITY_RESULT, result)

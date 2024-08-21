@@ -13,4 +13,5 @@
     <string name="toast_message_from_remote_service">Message from "remote" service</string>
     <string name="bind_remote_service">Bind Remote Service</string>
     <string name="call_remote_service">Call "remote" service</string>
+    <string name="start_services_activity">Start Services Activity</string>
 </resources>
