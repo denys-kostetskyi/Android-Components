@@ -45,6 +45,14 @@
         <service
             android:name=".service.LocalService"
             android:exported="false" />
+
+        <receiver
+            android:name=".receiver.LocaleChangeReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.LOCALE_CHANGED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
