@@ -19,6 +19,15 @@
         android:theme="@style/Theme.AndroidComponents"
         tools:targetApi="31">
         <service
+            android:name=".service.LoaderService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <activity
+            android:name=".activity.BroadcastsActivity"
+            android:exported="false" />
+
+        <service
             android:name=".service.JobDownloaderService"
             android:enabled="true"
             android:exported="false"
@@ -45,6 +54,14 @@
         <service
             android:name=".service.LocalService"
             android:exported="false" />
+
+        <receiver
+            android:name=".receiver.LocaleChangeReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.LOCALE_CHANGED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
