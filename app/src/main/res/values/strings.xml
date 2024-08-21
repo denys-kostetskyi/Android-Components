@@ -17,4 +17,7 @@
     <string name="toast_remote_service_is_not_bound">Remote service is not bound</string>
     <string name="start_services_activity">Start Services Activity</string>
     <string name="message_from_local_service">Message from local service</string>
+    <string name="toast_job_service_started">Job service started</string>
+    <string name="schedule_job_for_job_service">Schedule job for Job Service</string>
+    <string name="toast_job_scheduler_requires_api_26">JobScheduler requires API level 26</string>
 </resources>

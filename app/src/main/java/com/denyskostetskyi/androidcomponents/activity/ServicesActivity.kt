@@ -1,9 +1,13 @@
 package com.denyskostetskyi.androidcomponents.activity
 
+import android.app.job.JobInfo
+import android.app.job.JobScheduler
+import android.app.job.JobWorkItem
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
@@ -14,8 +18,11 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.denyskostetskyi.androidcomponents.R
 import com.denyskostetskyi.androidcomponents.databinding.ActivityServicesBinding
+import com.denyskostetskyi.androidcomponents.service.JobDownloaderService
 import com.denyskostetskyi.androidcomponents.service.LocalService
 import com.example.remoteservice.IRemoteService
+
+private var fileNumber = 0
 
 class ServicesActivity : AppCompatActivity() {
     private var _binding: ActivityServicesBinding? = null
@@ -69,6 +76,7 @@ class ServicesActivity : AppCompatActivity() {
             buttonCallLocalService.setOnClickListener { callLocalService() }
             buttonBindRemoteService.setOnClickListener { bindRemoteService() }
             buttonCallRemoteService.setOnClickListener { callRemoteServiceBound() }
+            buttonScheduleJob.setOnClickListener { scheduleJob() }
         }
     }
 
@@ -108,6 +116,25 @@ class ServicesActivity : AppCompatActivity() {
             remoteService?.message ?: NO_MESSAGE
         }
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun scheduleJob() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            Toast.makeText(
+                this,
+                getString(R.string.toast_job_scheduler_requires_api_26),
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+        val componentName = ComponentName(this, JobDownloaderService::class.java)
+        val jobInfo = JobInfo.Builder(JobDownloaderService.JOB_ID, componentName)
+            .setRequiresCharging(true)
+            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
+            .build()
+        val jobScheduler = getSystemService(JOB_SCHEDULER_SERVICE) as JobScheduler
+        val intent = JobDownloaderService.newIntent(fileNumber++)
+        jobScheduler.enqueue(jobInfo, JobWorkItem(intent))
     }
 
     override fun onStop() {
