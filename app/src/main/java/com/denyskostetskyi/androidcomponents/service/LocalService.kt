@@ -11,7 +11,7 @@ import android.util.Log
 import android.widget.Toast
 import com.denyskostetskyi.androidcomponents.R
 
-class TimerService : Service() {
+class LocalService : Service() {
     private var isTaskRunning = false
     private lateinit var handlerThread: HandlerThread
     private lateinit var serviceHandler: Handler
@@ -21,7 +21,7 @@ class TimerService : Service() {
         super.onCreate()
         Toast.makeText(
             this,
-            getString(R.string.toast_service_created),
+            getString(R.string.toast_local_service_started),
             Toast.LENGTH_SHORT
         ).show()
         handlerThread = HandlerThread(HANDLER_THREAD_NAME)
@@ -34,24 +34,16 @@ class TimerService : Service() {
         flags: Int,
         startId: Int,
     ): Int {
-        val duration = intent?.getIntExtra(KEY_TIMER_DURATION, DEFAULT_TIMER_DURATION)
-            ?: DEFAULT_TIMER_DURATION
-        startTimer(duration)
-        return START_STICKY
-    }
-
-    fun startTimer(duration: Int) {
-        if (duration < 0) {
-            throw IllegalArgumentException("Duration can't be less than 0")
-        }
         if (isTaskRunning) {
             Toast.makeText(
                 this,
                 getString(R.string.toast_service_task_already_running),
                 Toast.LENGTH_SHORT
             ).show()
-            return
+            return START_NOT_STICKY
         }
+        val duration = intent?.getIntExtra(KEY_TIMER_DURATION, DEFAULT_TIMER_DURATION)
+            ?: DEFAULT_TIMER_DURATION
         isTaskRunning = true
         serviceHandler.post {
             try {
@@ -64,20 +56,23 @@ class TimerService : Service() {
                 stopSelf()
             }
         }
+        return START_NOT_STICKY
     }
+
+    val message get() = getString(R.string.message_from_local_service)
 
     override fun onDestroy() {
         super.onDestroy()
         handlerThread.quitSafely()
         Toast.makeText(
             this,
-            getString(R.string.toast_service_destroyed),
+            getString(R.string.toast_local_service_destroyed),
             Toast.LENGTH_SHORT
         ).show()
     }
 
     inner class LocalBinder : Binder() {
-        fun getService(): TimerService = this@TimerService
+        fun getService(): LocalService = this@LocalService
     }
 
     override fun onBind(intent: Intent): IBinder {
@@ -85,15 +80,19 @@ class TimerService : Service() {
     }
 
     companion object {
-        private const val TAG = "TimerService"
-        private const val HANDLER_THREAD_NAME = "TimerServiceHandlerThread"
+        private const val TAG = "LocalService"
+        private const val HANDLER_THREAD_NAME = "LocalServiceHandlerThread"
         private const val KEY_TIMER_DURATION = "timer_duration"
         private const val DEFAULT_TIMER_DURATION = 10
         private const val SLEEP_DURATION = 1000L
 
-        fun newIntent(context: Context, duration: Int) =
-            Intent(context, TimerService::class.java).apply {
+        fun newIntent(context: Context, duration: Int): Intent {
+            if (duration < 0) {
+                throw IllegalArgumentException("Duration can't be less than 0")
+            }
+            return Intent(context, LocalService::class.java).apply {
                 putExtra(KEY_TIMER_DURATION, duration)
             }
+        }
     }
 }

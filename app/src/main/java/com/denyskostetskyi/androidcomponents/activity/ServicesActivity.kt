@@ -7,44 +7,44 @@ import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.isVisible
-import com.denyskostetskyi.androidcomponents.IRemoteMockService
+import com.denyskostetskyi.androidcomponents.R
 import com.denyskostetskyi.androidcomponents.databinding.ActivityServicesBinding
-import com.denyskostetskyi.androidcomponents.service.TimerService
+import com.denyskostetskyi.androidcomponents.service.LocalService
+import com.example.remoteservice.IRemoteService
 
 class ServicesActivity : AppCompatActivity() {
     private var _binding: ActivityServicesBinding? = null
-    private val binding: ActivityServicesBinding
+    private val binding
         get() = _binding ?: throw RuntimeException("ActivityServicesBinding is null")
 
-    private var timerService: TimerService? = null
-    private val isTimerServiceBound get() = timerService != null
-    private val timerServiceConnection = object : ServiceConnection {
+    private var localService: LocalService? = null
+    private val isLocalServiceBound get() = localService != null
+
+    private var remoteService: IRemoteService? = null
+    private val isRemoteServiceBound get() = remoteService != null
+
+    private val localServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            val binder = service as TimerService.LocalBinder
-            timerService = binder.getService()
-            switchTimerButtonsVisibility()
+            val binder = service as LocalService.LocalBinder
+            localService = binder.getService()
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
-            timerService = null
-            switchTimerButtonsVisibility()
+            localService = null
         }
     }
-
-    private var remoteService: IRemoteMockService? = null
-    private val isRemoteServiceBound get() = remoteService != null
     private val remoteServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            remoteService = IRemoteMockService.Stub.asInterface(service)
+            remoteService = IRemoteService.Stub.asInterface(service)
         }
 
         override fun onServiceDisconnected(className: ComponentName) {
-            Log.e(TAG, "Service has unexpectedly disconnected")
+            Log.e(TAG, "RemoteService disconnected")
             remoteService = null
         }
     }
@@ -59,73 +59,75 @@ class ServicesActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        setButtonClickListener()
+        setButtonClickListeners()
     }
 
-    private fun setButtonClickListener() {
-        binding.buttonStartTimerService.setOnClickListener {
-            startService(TimerService.newIntent(this, TIMER_DURATION))
-        }
-        binding.buttonBindTimerService.setOnClickListener {
-            bindTimerService()
-        }
-        binding.buttonStartTimer.setOnClickListener {
-            if (isTimerServiceBound) {
-                timerService?.startTimer(TIMER_DURATION)
-            } else {
-                switchTimerButtonsVisibility()
-            }
-        }
-        binding.buttonBindRemoteService.setOnClickListener {
-            bindRemoteService()
-        }
-        binding.buttonCallRemoteService.setOnClickListener {
-            if (isRemoteServiceBound) {
-                remoteService?.showToast("MainActivity")
-            } else {
-                switchRemoteServiceButtonsVisibility()
-            }
-        }
-    }
-
-    private fun bindTimerService() {
-        if (!isTimerServiceBound) {
-            val intent = TimerService.newIntent(this, TIMER_DURATION)
-            bindService(intent, timerServiceConnection, Context.BIND_AUTO_CREATE)
-        }
-    }
-
-    private fun switchTimerButtonsVisibility() {
+    private fun setButtonClickListeners() {
         with(binding) {
-            buttonBindTimerService.isVisible = !isTimerServiceBound
-            buttonStartTimer.isVisible = isTimerServiceBound
+            buttonStartLocalService.setOnClickListener { startLocalService() }
+            buttonBindLocalService.setOnClickListener { bindLocalService() }
+            buttonCallLocalService.setOnClickListener { callLocalService() }
+            buttonBindRemoteService.setOnClickListener { bindRemoteService() }
+            buttonCallRemoteService.setOnClickListener { callRemoteServiceBound() }
         }
+    }
+
+    private fun startLocalService() {
+        startService(LocalService.newIntent(this, TIMER_DURATION))
+    }
+
+    private fun bindLocalService() {
+        if (!isLocalServiceBound) {
+            val intent = LocalService.newIntent(this, TIMER_DURATION)
+            bindService(intent, localServiceConnection, BIND_AUTO_CREATE)
+        }
+    }
+
+    private fun callLocalService() {
+        val message = if (!isLocalServiceBound) {
+            getString(R.string.toast_local_service_is_not_bound)
+        } else {
+            localService?.message ?: NO_MESSAGE
+        }
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun bindRemoteService() {
-        val intent = Intent().apply {
-            setClassName(PACKAGE_NAME, CLASS_NAME)
+        if (!isRemoteServiceBound) {
+            val intent = Intent(INTENT_ACTION).apply {
+                setClassName(PACKAGE_NAME, CLASS_NAME)
+            }
+            bindService(intent, remoteServiceConnection, BIND_AUTO_CREATE)
         }
-        bindService(intent, remoteServiceConnection, Context.BIND_AUTO_CREATE)
     }
 
-    private fun switchRemoteServiceButtonsVisibility() {
-        with(binding) {
-            buttonBindRemoteService.isVisible = !isRemoteServiceBound
-            buttonCallRemoteService.isVisible = isRemoteServiceBound
+    private fun callRemoteServiceBound() {
+        val message = if (!isLocalServiceBound) {
+            getString(R.string.toast_remote_service_is_not_bound)
+        } else {
+            remoteService?.message ?: NO_MESSAGE
         }
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     override fun onStop() {
         super.onStop()
-        unbindService(timerServiceConnection)
+        if (isLocalServiceBound) {
+            unbindService(localServiceConnection)
+        }
+        if (isRemoteServiceBound) {
+            unbindService(remoteServiceConnection)
+        }
     }
 
     companion object {
         private const val TAG = "ServicesActivity"
         private const val TIMER_DURATION = 15
-        private const val PACKAGE_NAME = "com.denyskostetskyi.androidcomponents.service"
-        private const val CLASS_NAME = "$PACKAGE_NAME.RemoteMockService"
+
+        private const val INTENT_ACTION = "remoteService.AIDL"
+        private const val PACKAGE_NAME = "com.denyskostetskyi.remoteservice"
+        private const val CLASS_NAME = "$PACKAGE_NAME.RemoteService"
+        private const val NO_MESSAGE = "No message"
 
         fun newIntent(context: Context) = Intent(context, ServicesActivity::class.java)
     }
