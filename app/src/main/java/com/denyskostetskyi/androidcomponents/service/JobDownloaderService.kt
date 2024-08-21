@@ -7,8 +7,6 @@ import android.os.Build
 import android.os.Handler
 import android.os.HandlerThread
 import android.util.Log
-import android.widget.Toast
-import com.denyskostetskyi.androidcomponents.R
 
 class JobDownloaderService : JobService() {
     private var isTaskRunning = false
