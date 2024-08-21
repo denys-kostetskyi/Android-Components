@@ -10,4 +10,7 @@
     <string name="toast_service_created">TimerService created</string>
     <string name="toast_service_destroyed">TimerService destroyed</string>
     <string name="toast_service_task_already_running">TimerService task is already running</string>
+    <string name="toast_message_from_remote_service">Message from "remote" service</string>
+    <string name="bind_remote_service">Bind Remote Service</string>
+    <string name="call_remote_service">Call "remote" service</string>
 </resources>

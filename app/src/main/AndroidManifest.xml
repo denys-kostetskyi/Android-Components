@@ -12,6 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AndroidComponents"
         tools:targetApi="31">
+
         <activity
             android:name=".ComposeActivity"
             android:exported="false"
@@ -30,6 +31,13 @@
         <service
             android:name=".service.TimerService"
             android:exported="false" />
+        <service
+            android:name=".service.RemoteMockService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.denyskostetskyi.androidcomponents.service.IRemoteMockService.BIND" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
