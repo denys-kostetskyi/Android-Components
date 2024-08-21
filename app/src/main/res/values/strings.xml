@@ -4,4 +4,20 @@
     <string name="result_from_compose_activity">Result from ComposeActivity: %1$s</string>
     <string name="title_activity_second">SecondActivity</string>
     <string name="hello_from_main_activity">Hello from MainActivity!</string>
+    <string name="start_local_service">Start Local Service</string>
+    <string name="bind_local_service">Bind Local Service</string>
+    <string name="call_local_service">Call Local Service</string>
+    <string name="toast_local_service_is_not_bound">Local service is not bound</string>
+    <string name="toast_local_service_started">Local service started</string>
+    <string name="toast_local_service_destroyed">Local service destroyed</string>
+    <string name="toast_service_task_already_running">Local service task is already running</string>
+    <string name="toast_message_from_remote_service">Message from "remote" service</string>
+    <string name="bind_remote_service">Bind Remote Service</string>
+    <string name="call_remote_service">Call Remote service</string>
+    <string name="toast_remote_service_is_not_bound">Remote service is not bound</string>
+    <string name="start_services_activity">Start Services Activity</string>
+    <string name="message_from_local_service">Message from local service</string>
+    <string name="toast_job_service_started">Job service started</string>
+    <string name="schedule_job_for_job_service">Schedule job for Job Service</string>
+    <string name="toast_job_scheduler_requires_api_26">JobScheduler requires API level 26</string>
 </resources>

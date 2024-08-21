@@ -2,6 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <queries>
+        <intent>
+            <action android:name="remoteService.AIDL" />
+        </intent>
+    </queries>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,6 +18,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AndroidComponents"
         tools:targetApi="31">
+        <service
+            android:name=".service.JobDownloaderService"
+            android:enabled="true"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <activity
+            android:name=".activity.ServicesActivity"
+            android:exported="false" />
         <activity
             android:name=".ComposeActivity"
             android:exported="false"
@@ -26,6 +41,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".service.LocalService"
+            android:exported="false" />
     </application>
 
 </manifest>

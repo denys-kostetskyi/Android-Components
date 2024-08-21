@@ -1,0 +1,39 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <Button
+        android:id="@+id/buttonStartLocalService"
+        style="@style/button"
+        android:text="@string/start_local_service" />
+
+    <Button
+        android:id="@+id/buttonBindLocalService"
+        style="@style/button"
+        android:text="@string/bind_local_service" />
+
+    <Button
+        android:id="@+id/buttonCallLocalService"
+        style="@style/button"
+        android:text="@string/call_local_service" />
+
+    <Button
+        android:id="@+id/buttonBindRemoteService"
+        style="@style/button"
+        android:text="@string/bind_remote_service" />
+
+    <Button
+        android:id="@+id/buttonCallRemoteService"
+        style="@style/button"
+        android:text="@string/call_remote_service" />
+
+    <Button
+        android:id="@+id/buttonScheduleJob"
+        style="@style/button"
+        android:text="@string/schedule_job_for_job_service" />
+
+</LinearLayout>

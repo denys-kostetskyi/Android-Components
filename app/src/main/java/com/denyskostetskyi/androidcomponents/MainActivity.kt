@@ -7,7 +7,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.denyskostetskyi.androidcomponents.activity.ServicesActivity
 import com.denyskostetskyi.androidcomponents.databinding.ActivityMainBinding
+
 
 class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
@@ -31,6 +33,9 @@ class MainActivity : AppCompatActivity() {
         binding.buttonStartComposeActivity.setOnClickListener {
             launchComposeActivity()
         }
+        binding.buttonStartServicesActivity.setOnClickListener {
+            startActivity(ServicesActivity.newIntent(this))
+        }
     }
 
     private fun launchComposeActivity() {
@@ -38,6 +43,8 @@ class MainActivity : AppCompatActivity() {
         val intent = ComposeActivity.newIntent(this, message)
         startActivityForResult(intent, REQUEST_CODE_COMPOSE_ACTIVITY)
     }
+
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -54,6 +61,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
+        private const val TAG = "MainActivity"
         private const val REQUEST_CODE_COMPOSE_ACTIVITY = 1
         private const val KEY_COMPOSE_ACTIVITY_RESULT = "result"
         private const val NO_RESULT = "no result"
