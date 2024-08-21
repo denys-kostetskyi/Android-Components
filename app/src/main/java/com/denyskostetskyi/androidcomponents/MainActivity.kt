@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.denyskostetskyi.androidcomponents.databinding.ActivityMainBinding
+import com.denyskostetskyi.androidcomponents.service.TimerService
 
 class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
@@ -30,6 +31,9 @@ class MainActivity : AppCompatActivity() {
     private fun setButtonClickListener() {
         binding.buttonStartComposeActivity.setOnClickListener {
             launchComposeActivity()
+        }
+        binding.buttonStartTimerService.setOnClickListener {
+            startService(TimerService.newIntent(this, TIMER_DURATION))
         }
     }
 
@@ -57,6 +61,8 @@ class MainActivity : AppCompatActivity() {
         private const val REQUEST_CODE_COMPOSE_ACTIVITY = 1
         private const val KEY_COMPOSE_ACTIVITY_RESULT = "result"
         private const val NO_RESULT = "no result"
+
+        private const val TIMER_DURATION = 15
 
         fun newResultIntent(result: String) = Intent().apply {
             putExtra(KEY_COMPOSE_ACTIVITY_RESULT, result)
