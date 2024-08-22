@@ -1,4 +1,4 @@
-package com.denyskostetskyi.androidcomponents
+package com.denyskostetskyi.androidcomponents.activity
 
 import android.content.Context
 import android.content.Intent

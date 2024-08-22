@@ -1,4 +1,4 @@
-package com.denyskostetskyi.androidcomponents
+package com.denyskostetskyi.androidcomponents.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,9 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.denyskostetskyi.androidcomponents.activity.BroadcastsActivity
-import com.denyskostetskyi.androidcomponents.activity.ProvidersActivity
-import com.denyskostetskyi.androidcomponents.activity.ServicesActivity
+import com.denyskostetskyi.androidcomponents.R
 import com.denyskostetskyi.androidcomponents.databinding.ActivityMainBinding
 
 

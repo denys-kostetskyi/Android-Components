@@ -30,12 +30,12 @@
             android:name=".activity.ServicesActivity"
             android:exported="false" />
         <activity
-            android:name=".ComposeActivity"
+            android:name=".activity.ComposeActivity"
             android:exported="false"
             android:label="@string/title_activity_second"
             android:theme="@style/Theme.AndroidComponents" />
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
