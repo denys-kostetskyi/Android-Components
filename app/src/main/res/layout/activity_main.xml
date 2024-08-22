@@ -9,8 +9,7 @@
 
     <Button
         android:id="@+id/buttonStartComposeActivity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/button"
         android:text="@string/start_compose_activity" />
 
     <TextView
@@ -25,14 +24,17 @@
 
     <Button
         android:id="@+id/buttonStartServicesActivity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/button"
         android:text="@string/start_services_activity" />
 
     <Button
         android:id="@+id/buttonStartBroadcastsActivity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/button"
         android:text="@string/start_broadcasts_activity" />
+
+    <Button
+        android:id="@+id/buttonStartProvidersActivity"
+        style="@style/button"
+        android:text="@string/start_providers_activity" />
 
 </LinearLayout>

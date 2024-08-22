@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.denyskostetskyi.androidcomponents.activity.BroadcastsActivity
+import com.denyskostetskyi.androidcomponents.activity.ProvidersActivity
 import com.denyskostetskyi.androidcomponents.activity.ServicesActivity
 import com.denyskostetskyi.androidcomponents.databinding.ActivityMainBinding
 
@@ -35,6 +36,7 @@ class MainActivity : AppCompatActivity() {
             buttonStartComposeActivity.setOnClickListener { launchComposeActivity() }
             buttonStartServicesActivity.setOnClickListener { launchServicesActivity() }
             buttonStartBroadcastsActivity.setOnClickListener { launchBroadcastsActivity() }
+            buttonStartProvidersActivity.setOnClickListener { launchProvidersActivity() }
         }
     }
 
@@ -50,6 +52,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun launchBroadcastsActivity() {
         startActivity(BroadcastsActivity.newIntent(this))
+    }
+
+    private fun launchProvidersActivity() {
+        startActivity(ProvidersActivity.newIntent(this))
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
