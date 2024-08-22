@@ -9,8 +9,6 @@ class UserDao {
 
     fun getUsers(): List<User> = users
 
-    fun getUserById(id: Int): User? = users.find { it.id == id }
-
     fun addUser(user: User): Boolean {
         return if (users.none { it.id == user.id }) {
             users.add(user)
