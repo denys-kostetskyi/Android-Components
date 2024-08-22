@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <queries>
         <intent>
             <action android:name="remoteService.AIDL" />
@@ -18,21 +20,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AndroidComponents"
         tools:targetApi="31">
-        <service
-            android:name=".service.LoaderService"
-            android:enabled="true"
+        <activity
+            android:name=".activity.ProvidersActivity"
             android:exported="false" />
-
         <activity
             android:name=".activity.BroadcastsActivity"
             android:exported="false" />
-
-        <service
-            android:name=".service.JobDownloaderService"
-            android:enabled="true"
-            android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-
         <activity
             android:name=".activity.ServicesActivity"
             android:exported="false" />
@@ -54,6 +47,15 @@
         <service
             android:name=".service.LocalService"
             android:exported="false" />
+        <service
+            android:name=".service.LoaderService"
+            android:enabled="true"
+            android:exported="false" />
+        <service
+            android:name=".service.JobDownloaderService"
+            android:enabled="true"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <receiver
             android:name=".receiver.LocaleChangeReceiver"
@@ -62,6 +64,11 @@
                 <action android:name="android.intent.action.LOCALE_CHANGED" />
             </intent-filter>
         </receiver>
+
+        <provider
+            android:name=".provider.UserContentProvider"
+            android:authorities="com.denyskostetskyi.androidcomponents"
+            android:exported="false" />
     </application>
 
 </manifest>
